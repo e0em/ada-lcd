@@ -1,9 +1,0 @@
-#! /usr/bin/expect -f
-set timeout -1
-spawn ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@192.168.88.1
-match_max 100000
-expect "assword:"
-send "gemtek\r"
-expect "#"
-send "/app/lora_pkg/loracmd.sh lora_restart\r"
-expect eof
