@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
 import Adafruit_CharLCD as LCD
-
+import sys
+import time
+import json
 from subprocess import *
 from time import sleep, strftime
 from datetime import datetime
@@ -24,3 +26,21 @@ lcd.message(datetime.now().strftime('%b %d  %H:%M:%S\n'))
 lcd.message('IP%s' % (ipaddr.split()[0]))
 print ipaddr.split()[0]
 
+k = 0
+try:
+    buff = ''
+    while True:
+        buff += sys.stdin.read(1)
+        if buff.endswith('\n'):
+            json_data = buff[:-1]
+            print(json_data)
+            sensor_data = json.loads(json_data)['snr']
+            print(sensor_data)
+            lcd.clear()
+            lcd.message('SNR:'+ str(sensor_data))
+            buff = ''
+            k = k + 1
+except KeyboardInterrupt:
+   sys.stdout.flush()
+   pass
+print k
