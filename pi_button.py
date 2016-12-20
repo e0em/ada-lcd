@@ -40,4 +40,7 @@ while True:
     if lcd.is_pressed(LCD.DOWN):
         lcd.clear()
         wlan0 = run_cmd(show_wlan0_cmd)
-        lcd.message('wlan0:\n%s' % (wlan0.split()[0]))
+	if wlan0 == '': 
+            lcd.message('wlan0:None')
+        else:
+            lcd.message('wlan0:\n%s' % (wlan0.split()[0]))
