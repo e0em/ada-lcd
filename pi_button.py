@@ -40,7 +40,11 @@ while True:
     if lcd.is_pressed(LCD.DOWN):
         lcd.clear()
         wlan0 = run_cmd(show_wlan0_cmd)
-	if wlan0 == '': 
+	if wlan0 == '':
             lcd.message('wlan0:None')
         else:
             lcd.message('wlan0:\n%s' % (wlan0.split()[0]))
+    if lcd.is_pressed(LCD.LEFT):
+        lcd.clear()
+        lcd.message('wlan0 \ndhcpcd restart')
+        run_cmd("service dhcpcd restart")
