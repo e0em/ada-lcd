@@ -15,6 +15,7 @@ import paho.mqtt.client as mqtt
 import json
 import sys
 from optparse import OptionParser
+import subprocess
 
 usage = "usage: %prog [options] [host]\n\
   host: a MQTT broker IP \n\
@@ -45,7 +46,10 @@ parser.add_option("-R","--downlink", action="store_true",
 (options, args) = parser.parse_args()
 if options.display_lcd:
     import Adafruit_CharLCD as LCD
+    import pygame
     lcd = LCD.Adafruit_CharLCDPlate()
+    pygame.init()
+    pygame.mixer.init()
 print ("MQTT broker is:" + options.host + ":" + str(options.port))
 print ("MQTT Topic is:" + options.topic)
 
@@ -117,6 +121,12 @@ def on_message(client, userdata, msg):
               + '\tSNR:' + str(sensor_snr).rjust(4)
               + '\tRSSI:' + str(sensor_rssi).rjust(4)
               + '\tGWID:' + str(gwid_data).rjust(8))
+        print("debug:"+ sensor_data)
+        if sensor_data == '00000000000b01' or sensor_data == '00000000000901':
+            print("play music")
+            #player = subprocess.Popen(["/usr/bin/mplayer", "/home/marty/babycry.wav", "-loop", "0"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            mysound = pygame.mixer.Sound("/home/marty/babycry.wav")
+            mysound.play(loops=-1)
     elif msg.topic[:11] == 'GIOT-GW/DL/':
         print('Type:' + sensor_type + '\tMac:' + str(sensor_mac)[8:] + '\tMID:' + str(sensor_id) + '\tTXPara:' + str(sensor_txpara))
     elif msg.topic[:17] == 'GIOT-GW/DL-report':
@@ -127,6 +137,12 @@ def on_message(client, userdata, msg):
         lcd.clear()
         lcd.message(str(sensor_mac)[8:]+' C:'+str(sensor_count))
         lcd.message('\nS/R:' + str(sensor_snr) + '/' + str(sensor_rssi))
+        while sensor_data == '00000000000b01' or sensor_data == '00000000000901':
+            if lcd.is_pressed(LCD.SELECT):
+                print("Stop Music")
+                #player.stdin.write("q")
+                mysound.stop()
+                break
 
     # if gwid_data == "00001c497b48dc03" or gwid_data == "00001c497b48dc11":
     if msg.topic[:7] == 'GIOT-GW' and msg.topic[:17] != 'GIOT-GW/DL-report':
