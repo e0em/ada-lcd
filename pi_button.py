@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Example using a character LCD plate.
 import time
-
+import os
 import Adafruit_CharLCD as LCD
 from subprocess import *
 from time import sleep, strftime
@@ -36,7 +36,10 @@ while True:
     if lcd.is_pressed(LCD.UP):
         lcd.clear()
         eth0 = run_cmd(show_eth0_cmd)
-        lcd.message('eth0:\n%s' % (eth0.split()[0]))
+	if eth0 == '':
+            lcd.message('eth0:None')
+        else:
+            lcd.message('eth0:\n%s' % (eth0.split()[0]))
     if lcd.is_pressed(LCD.DOWN):
         lcd.clear()
         wlan0 = run_cmd(show_wlan0_cmd)
@@ -48,3 +51,8 @@ while True:
         lcd.clear()
         lcd.message('Rebooting')
         run_cmd("reboot")
+    if lcd.is_pressed(LCD.SELECT):
+        lcd.clear()
+        lcd.message('LoRa Message...')
+        os.system("/home/marty/github/ada-lcd/sub_mqtt_local_raw_lcd.py -d")
+        #run_cmd("python /home/marty/github/ada-lcd/sub_mqtt_local_raw_lcd.py")

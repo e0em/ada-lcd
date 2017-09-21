@@ -7,19 +7,9 @@ import time
 import Adafruit_CharLCD as LCD
 import paho.mqtt.client as mqtt
 import json
-import ConfigParser                                             # 匯入 配置檔 解析模塊
-from os.path import expanduser
-# 處理 giot credentials 設定值
-home = expanduser("~")
-default_value = "default"
-default_identity_file = home + "/.giot/credentials"
-config = ConfigParser.ConfigParser()
-config.read(default_identity_file)
-HostName = config.get(default_value, 'hostname')
-PortNumber = config.get(default_value, 'portnumber')
-Topic = config.get(default_value, 'topic')
-UserName = config.get(default_value, 'username')
-Password = config.get(default_value, 'password')
+HostName = "127.0.0.1"
+PortNumber = 1883
+Topic = "#"
 
 # Initialize the LCD using the pins
 lcd = LCD.Adafruit_CharLCDPlate()
@@ -37,7 +27,7 @@ def on_message(client, userdata, msg):
     #print(msg.topic+" "+str(msg.payload))
     json_data = msg.payload
     #print(json_data)
-    sensor_data = json.loads(json_data)['data']
+    sensor_data = json.loads(json_data[0])['data']
     #print( sensor_data[0:2])
     if sensor_data[0:2] == "42" :
     	button_status = "Yes" 
@@ -55,7 +45,7 @@ def on_message(client, userdata, msg):
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.username_pw_set(UserName, Password)
+#client.username_pw_set(UserName, Password)
 
 client.connect(HostName, PortNumber, 60)
 
