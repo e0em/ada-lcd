@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # Example using a character LCD plate.
-import time
+#import time
 import os
 import Adafruit_CharLCD as LCD
-from subprocess import *
-from time import sleep, strftime
-from datetime import datetime
+import subprocess
+#from time import sleep, strftime
+#from datetime import datetime
 
 # Initialize the LCD using the pins
 lcd = LCD.Adafruit_CharLCDPlate()
@@ -15,7 +15,7 @@ show_wlan0_cmd = "ip addr show wlan0 | grep inet|grep -v inet6 | awk '{print $2}
 lcd.clear()
 lcd.message('Press buttons...')
 def run_cmd(cmd):
-    p = Popen(cmd, shell=True, stdout=PIPE)
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     output = p.communicate()[0]
     return output
 # Make list of button value, text, and backlight color.
@@ -49,10 +49,16 @@ while True:
             lcd.message('wlan0:\n%s' % (wlan0.split()[0]))
     if lcd.is_pressed(LCD.LEFT):
         lcd.clear()
-        lcd.message('Rebooting')
-        run_cmd("reboot")
-    if lcd.is_pressed(LCD.SELECT):
-        lcd.clear()
         lcd.message('LoRa Message...')
         os.system("/home/marty/github/ada-lcd/sub_mqtt_local_raw_lcd.py -d")
         #run_cmd("python /home/marty/github/ada-lcd/sub_mqtt_local_raw_lcd.py")
+    if lcd.is_pressed(LCD.RIGHT):
+        lcd.clear()
+        lcd.message('Play Music...')
+        player = subprocess.Popen(["/usr/bin/mplayer", "/home/marty/tyxg.mp3", "-ss", "30"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        while True:
+            if lcd.is_pressed(LCD.SELECT):
+                lcd.clear()
+                lcd.message('Stop Music')
+                player.stdin.write("q")
+                break
