@@ -50,7 +50,7 @@ while True:
     if lcd.is_pressed(LCD.LEFT):
         lcd.clear()
         lcd.message('LoRa Message...')
-        os.system("/home/marty/github/ada-lcd/sub_mqtt_local_raw_lcd.py -d")
+        os.system("/home/marty/github/ServerPython/sub_mqtt_local_raw_lcd.py -d")
         #run_cmd("python /home/marty/github/ada-lcd/sub_mqtt_local_raw_lcd.py")
     if lcd.is_pressed(LCD.RIGHT):
         lcd.clear()
