@@ -1,0 +1,10 @@
+# 忽略 Poetry 虛擬環境（若設為在專案中）
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code 等 IDE 設定（選用）
+.vscode/
+
